@@ -19,17 +19,20 @@ const interval = 20000;
 const Tracker = () => {
   const ref = useRef<LeafletMap>(null);
   const { data, refetch } = useQuery(
-    'current',
+    'iss-history',
     ({ signal }) => api.get<Response>('/current', { signal }),
     {
       refetchInterval: interval,
+      initialData: () => ({ data: [] as Response }),
       onSuccess(data) {
         const current = data.data.at(-1);
         if (current) {
+          // Center map to current position
           ref.current?.panTo([current.latitude, current.longitude]);
         }
 
         if (data.data.length > 1) {
+          // Build ISS path
           const coords = data.data.map(({ latitude, longitude }) => [latitude, longitude]);
 
           Leaflet.polyline(coords as LatLngExpression[], { color: 'red' }).addTo(ref.current!);

@@ -1,10 +1,13 @@
-type GPSPoint = {
+export interface GPSPoint {
   latitude: number;
   longitude: number;
-  timestamp: number; // Unix timestamp in seconds
-};
+  timestamp: number;
+}
 
-const haversineDistance = (point1: GPSPoint, point2: GPSPoint) => {
+export const calculateDistanceByCoords = (
+  point1: GPSPoint,
+  point2: GPSPoint,
+) => {
   const R = 6371; // Earth's radius in km
   const toRadians = (deg: number) => deg * (Math.PI / 180);
 
@@ -18,20 +21,29 @@ const haversineDistance = (point1: GPSPoint, point2: GPSPoint) => {
     Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) ** 2;
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
   return R * c; // Distance in km
 };
 
 export const calculateVelocity = (point1: GPSPoint, point2: GPSPoint) => {
-  if (!point1 || !point2) return { distanceKm: 0, velocityMps: 0, velocity: 0 };
+  if (!point1 || !point2) return 0;
 
-  const distance = haversineDistance(point1, point2);
+  const distance = calculateDistanceByCoords(point1, point2);
   const timeInSeconds = point2.timestamp - point1.timestamp;
 
   if (timeInSeconds <= 0) {
-    return { distance, velocityMps: 0, velocity: 0 }; // Avoid division by zero
+    return 0; // Avoid division by zero
   }
 
-  const velocity = Math.round((distance / timeInSeconds) * 3600); // Convert km to km/h
-
-  return { distance, velocity };
+  return Math.round((distance / timeInSeconds) * 3600); // Convert km to km/h
 };
+
+export const mapResponseToData = (data: {
+  iss_position: { longitude: string; latitude: string };
+  timestamp: number;
+}) => ({
+  longitude: +data.iss_position.longitude,
+  latitude: +data.iss_position.latitude,
+  timestamp: data.timestamp,
+  velocity: 0,
+});

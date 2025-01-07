@@ -7,8 +7,8 @@ interface Props {
 
 const queryClient = new QueryClient();
 
-const Providers = ({ children }: Props) => {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-};
+const Providers = ({ children }: Props) => (
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+);
 
 export default Providers;
