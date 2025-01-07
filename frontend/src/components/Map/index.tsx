@@ -1,35 +1,37 @@
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import Tracker from 'components/Tracker';
-import { forwardRef } from 'react';
+import React, { ForwardedRef, forwardRef, ReactNode } from 'react';
+import { Map as LeafletMap } from 'leaflet';
 
 interface Props {
-  latitude?: string;
-  longitude?: string;
+  latitude?: number;
+  longitude?: number;
+  children: ReactNode;
 }
 
-const Map = ({ latitude = '51.505', longitude = '-0.09' }: Props, ref: any) => {
-  const position = { lat: +latitude, lng: +longitude };
+const Map = (
+  { latitude = 51.505, longitude = -0.09, children }: Props,
+  ref: ForwardedRef<LeafletMap>,
+) => {
+  const position = { lat: latitude, lng: longitude };
 
   return (
-    <div>
-      <MapContainer
-        center={position}
-        zoom={2}
-        scrollWheelZoom={false}
-        style={{ height: '300px', width: '600px' }}
-        ref={ref}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={position}>
-          <Popup>ISS</Popup>
-        </Marker>
-      </MapContainer>
-    </div>
+    <MapContainer
+      center={position}
+      zoom={2}
+      scrollWheelZoom={false}
+      style={{ height: '300px', width: '100%' }}
+      // @ts-ignore
+      ref={ref}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+
+      {children}
+    </MapContainer>
   );
 };
 
-export default forwardRef(Map);
+export default forwardRef<LeafletMap, Props>(Map);
