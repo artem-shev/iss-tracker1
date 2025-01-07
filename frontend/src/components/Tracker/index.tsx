@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import api from 'utils/api';
 import Map from 'components/Map';
 import React, { useRef } from 'react';
-import { Map as LeafletMap } from 'leaflet';
+import Leaflet, { LatLngExpression, Map as LeafletMap } from 'leaflet';
 import { Marker, Popup } from 'react-leaflet';
 
 type Response = { latitude: number; longitude: number; timestamp: number; velocity: number }[];
@@ -20,6 +20,12 @@ const Tracker = () => {
         const current = data.data.at(-1);
         if (current) {
           ref.current?.panTo([current.latitude, current.longitude]);
+        }
+
+        if (data.data.length > 1) {
+          const coords = data.data.map(({ latitude, longitude }) => [latitude, longitude]);
+
+          Leaflet.polyline(coords as LatLngExpression[], { color: 'red' }).addTo(ref.current!);
         }
       },
     },

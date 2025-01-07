@@ -4,7 +4,6 @@ import { map } from 'rxjs';
 import { calculateVelocity } from 'src/modules/tracker/helpers';
 
 const url = 'http://api.open-notify.org/iss-now.json';
-
 @Injectable()
 export default class TrackerService {
   private history = [];
