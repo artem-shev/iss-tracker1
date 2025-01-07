@@ -18,9 +18,9 @@ const Map = (
   return (
     <MapContainer
       center={position}
-      zoom={2}
+      zoom={3}
       scrollWheelZoom={false}
-      style={{ height: '300px', width: '100%' }}
+      style={{ height: '600px', width: '100%' }}
       // @ts-ignore
       ref={ref}
     >

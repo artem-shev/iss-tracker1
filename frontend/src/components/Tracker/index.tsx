@@ -4,6 +4,13 @@ import Map from 'components/Map';
 import React, { useRef } from 'react';
 import Leaflet, { LatLngExpression, Map as LeafletMap } from 'leaflet';
 import { Marker, Popup } from 'react-leaflet';
+import {
+  StyledButton,
+  StyledInfoPanel,
+  StyledPanelTitle,
+  StyledWrapper,
+} from 'components/Tracker/styled';
+import dayjs from 'dayjs';
 
 type Response = { latitude: number; longitude: number; timestamp: number; velocity: number }[];
 
@@ -35,31 +42,27 @@ const Tracker = () => {
   const position = current ? { lat: current?.latitude, lng: current?.longitude } : undefined;
 
   return (
-    <div style={{ position: 'relative' }}>
-      <button onClick={() => refetch()}>refetch</button>
+    <div>
+      <StyledWrapper>
+        <h4>ISS Tracker</h4>
+        <StyledButton onClick={() => refetch()}>refetch</StyledButton>
+      </StyledWrapper>
       <Map {...position} ref={ref}>
         {position && (
           <>
             <Marker position={position} key={JSON.stringify(position)}>
               <Popup>ISS</Popup>
             </Marker>
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                zIndex: 1000,
-                background: 'white',
-              }}
-            >
+            <StyledInfoPanel>
+              <StyledPanelTitle>ISS</StyledPanelTitle>
               <div>Latitude: {current?.latitude}</div>
               <div>Longitude: {current?.longitude}</div>
               <div>Velocity: {current?.velocity}</div>
-            </div>
+              <div>Updated: {dayjs.unix(current?.timestamp!).format('hh:mm:ss')}</div>
+            </StyledInfoPanel>
           </>
         )}
       </Map>
-      ;
     </div>
   );
 };
